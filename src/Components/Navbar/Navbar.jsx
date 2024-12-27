@@ -21,7 +21,7 @@ const Navbar = () => {
         <img src={logo} alt="" />
         <p> Shoper</p>
       </div>
-      <img onCLick={dropdown_toggle} src={nav_dropdown} alt="" />
+      <img className="nav-dropdown" onClick={dropdown_toggle} src={nav_dropdown} alt="" />
       <ul ref={menuRef} className="nav-menu">
         <li onClick={()=>{setMenu("shop")}}> <Link to="/" style={{ textDecoration: "none" }}>Shop</Link>{menu==="shop"?<hr/>:<></>}</li>
         <li onClick={()=>{setMenu("Men")}}><Link to="/mens" style={{ textDecoration: "none" }}>Men</Link>{menu==="Men"?<hr/>:<></>}</li>
