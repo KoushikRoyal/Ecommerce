@@ -1,59 +1,65 @@
-import React, { createContext, useState } from "react";
-import all_product from "../Components/Assets/all_product";
+import React, { createContext, useState, useEffect } from "react";
+import all_product_data from "../Components/Assets/all_product";
 
 export const ShopContext = createContext(null);
 
-const getDefaultCart = () => {
+const getDefaultCart = (products) => {
   const cart = {};
-  all_product.forEach((product) => {
-    cart[product.id] = 0; // Use product IDs from `all_product` to initialize the cart
+  products.forEach((product) => {
+    cart[product.id] = 0; // Initialize cart with product IDs and quantities as 0
   });
   return cart;
 };
 
 const ShopContextProvider = (props) => {
-  const [cartItems, setCartItems] = useState(getDefaultCart());
+  const [all_product, setAll_Product] = useState([]); // State for all products
+  const [cartItems, setCartItems] = useState({}); // State for cart items
+
+  // Load products data (mocking an API call)
+  useEffect(() => {
+    // Simulate fetching product data and setting state
+    setAll_Product(all_product_data);
+
+    // Initialize cartItems when products are loaded
+    setCartItems(getDefaultCart(all_product_data));
+  }, []);
 
   const addToCart = (itemId) => {
     setCartItems((prev) => ({
       ...prev,
       [itemId]: prev[itemId] + 1,
     }));
-    console.log(`Item ${itemId} added. Updated cart:`, cartItems);
   };
 
   const removeFromCart = (itemId) => {
     setCartItems((prev) => ({
       ...prev,
-      [itemId]: prev[itemId] > 0 ? prev[itemId] - 1 : 0, // Ensure quantity doesn't go below zero
+      [itemId]: prev[itemId] > 0 ? prev[itemId] - 1 : 0, // Prevent negative quantities
     }));
-    console.log(`Item ${itemId} removed. Updated cart:`, cartItems);
   };
 
   const getTotalCartAmount = () => {
     let totalAmount = 0;
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
-        let itemInfo = all_product.find(
+        const itemInfo = all_product.find(
           (product) => product.id === Number(item)
         );
-        totalAmount += itemInfo.new_price * cartItems[item];
+        if (itemInfo) {
+          totalAmount += itemInfo.new_price * cartItems[item];
+        }
       }
     }
     return totalAmount;
   };
 
-  const getTotalCartItems=()=>{
-    let totalItem = 0;
-    for(const item in cartItems)
-    {
-      if(cartItems[item]> 0)
-      {
-        totalItem+=cartItems[item];
-      }
+  const getTotalCartItems = () => {
+    let totalItems = 0;
+    for (const item in cartItems) {
+      totalItems += cartItems[item];
     }
-    return totalItem;
-  }
+    return totalItems;
+  };
 
   const contextValue = {
     getTotalCartItems,
